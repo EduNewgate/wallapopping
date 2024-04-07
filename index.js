@@ -66,16 +66,12 @@ bot.on('callback_query', (callbackQuery) => {
             });
             res.on('end', () => {
                 const categories = JSON.parse(Buffer.concat(data).toString());
-                console.log(categories)
-                //let catButtons = buildCatButtons(categories.categories);
+                let catButtons = buildCatButtons(categories.categories);
                 const options = {
                     reply_markup: {
                         resize_keyboard: true,
                         one_time_keyboard: true,
-                        inline_keyboard: categories.categories.map((category, index) => ([{
-                            text: category.name,
-                            callback_data: index
-                        }]))
+                        inline_keyboard: catButtons
                     }
                 }
                 bot.sendMessage(callbackQuery.message.chat.id, 'Seleccione una categoría:', options);
@@ -91,3 +87,19 @@ bot.on('callback_query', (callbackQuery) => {
         bot.sendMessage(options.chat_id, 'Búsqueda eliminada!');
     }
 });
+
+function buildCatButtons(categories) {
+    let buttonsMatrix = [];
+    let catBtn = [];
+    for (let index = 0; index < categories.length; index++) {
+        const element = categories[index];
+        let buttonsMatrixIndex = 0;
+        if (index != 0 && index % 2 == 0) {
+            buttonsMatrixIndex+=1;
+            buttonsMatrix.push(catBtn);
+            catBtn = [];
+        }
+        catBtn.push({text: element.name, callback_data: element.name});
+    }
+    return buttonsMatrix;
+}
