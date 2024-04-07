@@ -66,12 +66,16 @@ bot.on('callback_query', (callbackQuery) => {
             });
             res.on('end', () => {
                 const categories = JSON.parse(Buffer.concat(data).toString());
-                let catButtons = buildCatButtons(categories.categories);
+                console.log(categories)
+                //let catButtons = buildCatButtons(categories.categories);
                 const options = {
                     reply_markup: {
                         resize_keyboard: true,
                         one_time_keyboard: true,
-                        inline_keyboard: catButtons
+                        inline_keyboard: categories.categories.map((category, index) => ([{
+                            text: category.name,
+                            callback_data: index
+                        }]))
                     }
                 }
                 bot.sendMessage(callbackQuery.message.chat.id, 'Seleccione una categoría:', options);
@@ -87,18 +91,3 @@ bot.on('callback_query', (callbackQuery) => {
         bot.sendMessage(options.chat_id, 'Búsqueda eliminada!');
     }
 });
-
-function buildCatButtons(categories) {
-    let catButtons = [];
-    for (const [index, categorie] of categories) {
-        let catBtn = []
-        if (index != 0 && index % 2 === 0) {
-
-        }
-    }
-    categories.forEach(cat => {
-        let catBtn = {text: cat.name, callback_data: cat.vertical_id};
-        catButtons.push(catBtn);
-    });
-    return [catButtons];
-}
